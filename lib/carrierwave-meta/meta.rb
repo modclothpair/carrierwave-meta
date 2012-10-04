@@ -8,10 +8,10 @@ module CarrierWave
 
       set_content_type(true)
 
-      after :retrieve_from_cache, :set_content_type
-      after :retrieve_from_cache, :call_store_meta
-      after :retrieve_from_store, :set_content_type
-      after :retrieve_from_store, :call_store_meta
+      after :retrieve_from_cache, :set_content_type_x
+      after :retrieve_from_cache, :call_store_meta_x
+      after :retrieve_from_store, :set_content_type_x
+      after :retrieve_from_store, :call_store_meta_x
 
       model_delegate_attribute :content_type, ''
       model_delegate_attribute :file_size, 0
@@ -32,7 +32,9 @@ module CarrierWave
       end
     end
 
-    def set_content_type(file = nil)
+    def set_content_type_x(file = nil)
+      return if file.present?
+      
       set_content_type(true)
     end
 
@@ -41,7 +43,8 @@ module CarrierWave
     end
 
     private
-    def call_store_meta(file = nil)
+    def call_store_meta_x(file = nil)
+      return if file.present?
       # Re-retrieve metadata for a file only if model is not present OR model is not saved.
       store_meta if self.model.nil? || (self.model.respond_to?(:new_record?) && self.model.new_record?)
     end
